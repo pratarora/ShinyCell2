@@ -75,7 +75,7 @@ wrShFunc <- function() {
     '    text =             element_text(size = base_size, family = "Helvetica"), \n',
     '    panel.background = element_rect(fill = "white", colour = NA), \n',
     '    axis.line =   element_line(colour = "black"), \n',
-    '    axis.ticks =  element_line(colour = "black", size = base_size / 20), \n',
+    '    axis.ticks =  element_line(colour = "black", linewidth = base_size / 20), \n',
     '    axis.title =  element_text(face = "bold"), \n',
     '    axis.text =   element_text(size = base_size), \n',
     '    axis.text.x = element_text(angle = Xang, hjust = XjusH), \n',
