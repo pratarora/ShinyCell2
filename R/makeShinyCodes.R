@@ -53,7 +53,14 @@ makeShinyCodes <- function(
   shiny.headers,
   shiny.dir,
   defPtSiz = 1.25,
-  ganalytics = NA
+  ganalytics = NA,
+  deg.default.comparison = NULL,
+  deg.default.celltype   = NULL,
+  lr.default.groups      = NULL,
+  lr.default.sources     = NULL,
+  lr.default.targets     = NULL,
+  lr.default.rank        = 0.05,
+  lr.default.top_n       = 25
 ) {
   ### Checks
   if (length(shiny.prefix) > 1) {
@@ -99,6 +106,12 @@ makeShinyCodes <- function(
       readr::write_file(wrSVloadT1(i), file = fname, append = TRUE)
     }
   }
+  if (file.exists(paste0(shiny.dir, "/deg.rds"))) {
+    readr::write_file(wrSVloadDEG(), file = fname, append = TRUE)
+  }
+  if (file.exists(paste0(shiny.dir, "/liana.rds"))) {
+    readr::write_file(wrSVloadLR(), file = fname, append = TRUE)
+  }
   readr::write_file(wrSVpre(), file = fname, append = TRUE)
   for (i in shiny.prefix) {
     if (file.exists(paste0(shiny.dir, "/", i, "image.rds"))) {
@@ -124,6 +137,12 @@ makeShinyCodes <- function(
     readr::write_file(wrSVmainB3(i), file = fname, append = TRUE)
     readr::write_file(wrSVmainMOD(i), file = fname, append = TRUE)
   }
+  if (file.exists(paste0(shiny.dir, "/deg.rds"))) {
+    readr::write_file(wrSVmainDEG(), file = fname, append = TRUE)
+  }
+  if (file.exists(paste0(shiny.dir, "/liana.rds"))) {
+    readr::write_file(wrSVmainLR(), file = fname, append = TRUE)
+  }
   readr::write_file(wrSVpost(), file = fname, append = TRUE)
 
   ### Write code for ui.R
@@ -137,6 +156,12 @@ makeShinyCodes <- function(
     if (file.exists(paste0(shiny.dir, "/", i, "bw.rds"))) {
       readr::write_file(wrUIloadT1(i), file = fname, append = TRUE)
     }
+  }
+  if (file.exists(paste0(shiny.dir, "/deg.rds"))) {
+    readr::write_file(wrUIloadDEG(), file = fname, append = TRUE)
+  }
+  if (file.exists(paste0(shiny.dir, "/liana.rds"))) {
+    readr::write_file(wrUIloadLR(), file = fname, append = TRUE)
   }
   readr::write_file(wrUIpre(shiny.title, ganalytics), file = fname, append = TRUE)
   if(length(shiny.prefix) == 1){
@@ -159,6 +184,23 @@ makeShinyCodes <- function(
     readr::write_file(wrUImainB3(shiny.prefix), file = fname, append = TRUE)
     readr::write_file(wrUImainMOD(shiny.prefix), file = fname, append = TRUE)
     readr::write_file(glue::glue(', \n'), append = TRUE, file = fname)
+    if (file.exists(paste0(shiny.dir, "/deg.rds"))) {
+      readr::write_file(
+        wrUImainDEG(default.comparison = deg.default.comparison,
+                    default.celltype   = deg.default.celltype),
+        file = fname, append = TRUE)
+      readr::write_file(glue::glue(', \n'), append = TRUE, file = fname)
+    }
+    if (file.exists(paste0(shiny.dir, "/liana.rds"))) {
+      readr::write_file(
+        wrUImainLR(default.groups  = lr.default.groups,
+                   default.sources = lr.default.sources,
+                   default.targets = lr.default.targets,
+                   default.rank    = lr.default.rank,
+                   default.top_n   = lr.default.top_n),
+        file = fname, append = TRUE)
+      readr::write_file(glue::glue(', \n'), append = TRUE, file = fname)
+    }
   } else {
     for (i in seq_along(shiny.prefix)) {
       hhh = shiny.headers[i]
@@ -231,6 +273,23 @@ makeShinyCodes <- function(
         append = TRUE
       )
       readr::write_file(glue::glue('), \n\n\n'), append = TRUE, file = fname)
+    }
+    if (file.exists(paste0(shiny.dir, "/deg.rds"))) {
+      readr::write_file(
+        wrUImainDEG(default.comparison = deg.default.comparison,
+                    default.celltype   = deg.default.celltype),
+        file = fname, append = TRUE)
+      readr::write_file(glue::glue(', \n'), append = TRUE, file = fname)
+    }
+    if (file.exists(paste0(shiny.dir, "/liana.rds"))) {
+      readr::write_file(
+        wrUImainLR(default.groups  = lr.default.groups,
+                   default.sources = lr.default.sources,
+                   default.targets = lr.default.targets,
+                   default.rank    = lr.default.rank,
+                   default.top_n   = lr.default.top_n),
+        file = fname, append = TRUE)
+      readr::write_file(glue::glue(', \n'), append = TRUE, file = fname)
     }
   }
   readr::write_file(wrUIpost(shiny.footnotes), file = fname, append = TRUE)
